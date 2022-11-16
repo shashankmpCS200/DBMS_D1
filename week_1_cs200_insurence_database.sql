@@ -148,6 +148,30 @@ select name from person
 order by name desc;
 
 
+select * 
+from participated
+order by damage_amount desc;
+
+select avg(damage_amount)
+from participated;
+
+select name
+from person
+where driver_id in(select driver_id from participated 
+where damage_amount >( select avg(damage_amount) from participated));
+
+select max(damage_amount)
+from participated;
+
+delete from participated
+where damage_amount<(select t.amt from (select avg(damage_amount) amt from participated) t);
+
+select p.name,c.model,pt.damage_ammount,a.location
+from person p,car c,participated pt,accidents a
+where p.driver_id=pt.driver_id and
+pt.report_num=a.report_num and pt.reg_no=c.reg_no and a.location="BULL TEMPLE ROAD";
+
+
 
 
 
