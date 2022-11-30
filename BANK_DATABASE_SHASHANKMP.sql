@@ -37,6 +37,21 @@ CREATE TABLE loan(
     PRIMARY KEY(loan_number),
     foreign key(branch_name)REFERENCES branch(branch_name) ON DELETE CASCADE
     );
+CREATE TABLE borrower(
+	loan_number INT,
+    customer_name VARCHAR(10),
+    PRIMARY KEY(loan_number,customer_name),
+    FOREIGN KEY(loan_number)REFERENCES loan(loan_number) ON DELETE CASCADE,
+    FOREIGN KEY(customer_name)REFERENCES bank_customer(customer_name) ON DELETE CASCADE
+    );
+ 
+INSERT INTO borrower
+VALUE("1","AVINASH"),
+("2","DINESH"),
+("3","NIKIL"),
+("4","RAVI"),
+("5","AVINASH");
+insert into borrower value("6","mohan");
 
 INSERT INTO branch
 VALUE("SBI_CHAMRAJPET","BANGALORE","50000"),
@@ -116,6 +131,50 @@ from depositer d,bank_account a,branch b
 where d.acc_no=a.acc_no AND a.branch_name=b.branch_name
 group by d.customer_name
 having count(*)>=2;
+
+select d.customer_name
+from branch b,depositer d,bank_account a
+where b.branch_city="delhi" and d.acc_no=a.acc_no and b.branch_name=a.branch_name
+group by d.customer_name
+having count(customer_name)>1;
+
+select b.branch_name
+from branch b
+where b.assets> all(select sum(b.assets)
+				from branch b
+				where b.branch_city="BANGALORE");
+                
+select distinct b.customer_name 
+from borrower b,depositer d
+where b.customer_name not in(select d.customer_name from loan l,depositer d,borrower b
+							where l.loan_number=b.loan_number and
+                            d.customer_name=b.customer_name);
+
+select distinct d.customer_name
+from depositer d
+where d.customer_name in( select d.customer_name 
+					from branch b,depositer d,bank_account a
+                    where b.branch_city="bangalore" and b.branch_name=a.branch_name and
+                    a.acc_no=d.acc_no and d.customer_name in(select customer_name from borrower));
+
+update bank_account
+set balance=(balance+(balance*0.05))
+where acc_no in(1,2,3,4,5,6,8,9,10,11);
+select*from bank_account;
+
+delete a.*
+from bank_account a,branch b
+where branch_city="bombay" and a.branch_name=b.branch_name;
+
+delete ba.* from bank_account ba, branch b where branch_city='Bombay' and
+ba.branch_name=b.branch_name;
+
+
+delete b.*,ba.* from branch b, bank_account ba,loan l
+Where b.branch_city=”Bangalore” and b.branch_name=ba.branch_name
+And l.branch_name=ba.branch_name;
+select * from branch;
+
 
 
 
