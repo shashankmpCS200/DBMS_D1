@@ -138,4 +138,20 @@ where  e.emp_no
 in (select e.mgr_no
 from employee e
 where  e.emp_no in(select mgr_no from employee));
+
+select m.e_name,count(*)
+from employee e,employee m
+where e.mgr_no= m.emp_no
+group by m.e_name
+having count(*)=(select max(mycount)
+from(select count(*)mycount
+from employee
+group by mgr_no)a);
+
+select *
+from employee e
+where e.dept_no=(select m.dept_no
+from employee m
+where e.mgr_no=m.emp_no);
+
     
