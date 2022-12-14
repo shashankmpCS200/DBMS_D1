@@ -65,19 +65,24 @@ INSERT INTO project VALUES
 INSERT INTO employee VALUES
 ("10","DEV",NULL,'2016-11-21',"50000","2"),
 ("11","ARJUN",NULL,'2015-1-12',"20000","3"),
-("12","RAHUL",NULL,'2016-10-20',"35000","6"),
-("13","SARANG",NULL,'2020-12-21',"60000","5"),
+("12","RAHUL",'16','2016-10-20',"35000","6"),
+("13","SARANG",NULL,'2020-12-21',"60000","1"),
 ("14","PUSHKAR","16",'2019-9-15',"15000","1"),
 ("15","VIRAT",NULL,'2012-5-13',"50000","4"),
-("16","PHILIP",NULL,'2021-7-1',"20000","1"),
-("17","ARUN","10",'2016-4-13',"40000","2");
+("16","PHILIP",13,'2021-7-1',"20000","1"),
+("17","ARUN","10",'2016-4-13',"40000","2"),
+("18","RAJ","16",'2016-5-13',"15000","1"),
+("19","SARA","10",'2012-5-13',"60000","2"),
+("20","ROHIT","16",'2016-5-13',"15000","1");
+
 
 INSERT INTO incentives VALUES
-("13",'2021-11-5',"5000"),
 ("11",'2019-1-21',"2000"),
 ("14",'2020-10-15',"8000"),
 ("15",'2015-11-15',"10000"),
-("15",'2021-11-5',"9000");
+("15",'2021-11-5',"10000"),
+("14",'2021-11-5',"9000"),
+("13",'2021-11-5',"5000");
 
 INSERT INTO assigned_to VALUES
 ("10","2","LEAD"),
@@ -112,5 +117,25 @@ WHERE e.emp_no=a.emp_no AND e.emp_no=i.emp_no AND e.dept_no=d.dept_no AND i.ince
 SELECT max(incentive_amount)
 FROM incentives i
 WHERE i.incentive_date between '2021-1-1'AND'2021-12-31');
-    
+
+#WEEK 6
+
+SELECT e1.e_name,e1.sal
+FROM employee e1
+WHERE  sal>(SELECT avg(sal) FROM employee e WHERE e1.dept_no=e.dept_no) AND e1.mgr_no is NULL;
+
+SELECT e.emp_no,i.incentive_amount,i.incentive_date
+FROM employee e,incentives i 
+WHERE e.emp_no=i.emp_no and incentive_date between '2021-10-31' and '2021-12-1'
+and incentive_amount=(SELECT max(incentive_amount) FROM incentives i
+                                  WHERE incentive_date between '2021-10-31' and '2021-12-1'
+      and i.incentive_amount<(SELECT max(incentive_amount) FROM incentives
+                                  WHERE incentive_date between '2021-10-31' and '2021-12-1'));
+                                  
+select e.e_name
+from employee e
+where  e.emp_no
+in (select e.mgr_no
+from employee e
+where  e.emp_no in(select mgr_no from employee));
     
